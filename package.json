@@ -1,0 +1,25 @@
+{
+  "name": "arthus",
+  "version": "0.0.0",
+  "description": "Yet another web framework.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha -u tdd -R spec"
+  },
+  "repository": "",
+  "keywords": [
+    "framework"
+  ],
+  "author": "Simon Ljungberg <simon@bloglovin.com>",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "gitHead": "27e7e91f9f918317767b5595af5d7876e2609d1b",
+  "dependencies": {
+    "routes": "~0.2.0",
+    "async": "~0.2.9",
+    "nconf": "~0.6.7"
+  }
+}
