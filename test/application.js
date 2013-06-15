@@ -88,7 +88,7 @@ suite('Core Application', function () {
     });
   });
 
-  test('Bootstrapps correctly.', function (done) {
+  test('Bootstraps correctly.', function (done) {
     var a = new app();
     a.bootstrap(__dirname + '/fixture', function (err) {
       assert(a.paths.get('controllers'), 'Paths should be correctly setup.');
