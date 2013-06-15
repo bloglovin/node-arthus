@@ -1,0 +1,9 @@
+{
+  "get": {
+    "/": "index.index",
+    "/foo": "index.foo"
+  },
+  "post": {
+    "/": "index.post"
+  }
+}

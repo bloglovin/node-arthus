@@ -78,6 +78,16 @@ suite('Core Application', function () {
     assert.equal(a.getHelper('foo'), false);
   });
 
+  test('Setting a route works.', function (done) {
+    var a = new app();
+    a.bootstrap(__dirname + '/fixture', function () {
+      a.setRoute('get', '/foo', 'foo.bar');
+      var matched = a.routers.get.match('/foo');
+      assert.equal(matched.fn, 'foo.bar');
+      done();
+    });
+  });
+
   test('Bootstrapps correctly.', function (done) {
     var a = new app();
     a.bootstrap(__dirname + '/fixture', function (err) {
@@ -85,6 +95,13 @@ suite('Core Application', function () {
       assert(a.config.get('boop'), 'Configuration should be loaded.');
       assert(a.getController('foo'), 'Should correctly load controllers.');
       assert(a.getHelper('bar'), 'Should correctly load helpers.');
+
+      // Test router setup
+      var HTTPMethods = ['get', 'post', 'put', 'delete', 'patch'];
+      HTTPMethods.forEach(function (method) {
+        assert(a.routers[method], 'Missing router for method: ' + method);
+      });
+
       done();
     });
   });
