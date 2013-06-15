@@ -14,6 +14,15 @@ suite('Core Application', function () {
     assert(ret);
   });
 
+  test('Setting a controller emits event.', function (done) {
+    var a = new app();
+    a.on('controllerSet', function (controller) {
+      assert(controller);
+      done();
+    });
+    var ret = a.setController('foo', { bar: 'baz' });
+  });
+
   test('Don\'t overwrite existing controller.', function () {
     var a = new app();
     a.setController('foo', { bar: 'baz' });

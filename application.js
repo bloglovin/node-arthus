@@ -30,6 +30,7 @@ Application.prototype.setController = function (name, controller) {
   if (!this.controllers[name]) {
     this.controllers[name] = controller;
     ret = true;
+    this.emit('controllerSet', [controller]);
   }
 
   return ret;
