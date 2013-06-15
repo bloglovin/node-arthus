@@ -41,5 +41,15 @@ suite('Core Application', function () {
     var a = new app();
     assert.equal(a.getController('foo'), false);
   });
+
+  test('Bootstrapps correctly.', function (done) {
+    var a = new app();
+    a.bootstrap(__dirname + '/fixture', function (err) {
+      assert(a.paths.get('controllers'), 'Paths should be correctly setup.');
+      assert(a.config.get('boop'), 'Configuration should be loaded.');
+      assert(a.getController('foo'), 'Should correctly load controllers.');
+      done();
+    });
+  });
 });
 

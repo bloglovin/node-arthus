@@ -4,6 +4,8 @@
 
 var util   = require('util');
 var events = require('events');
+var async  = require('async');
+var path   = require('path');
 
 //
 // ## Application Constructor
@@ -16,6 +18,66 @@ var Application = function () {
 
 // Extend event emitter.
 util.inherits(Application, events.EventEmitter);
+
+//
+// ## Bootstrap
+//
+// Bootstrap application by loading controllers, and helpers and everything.
+//
+// * **root**, root directory to bootstrap in.
+// * **callback**, called when boostrap is complete or if an error
+//   is encountered.
+//
+Application.prototype.bootstrap = function (root, callback) {
+  this.root = root;
+  var self = this;
+  async.series(
+    [
+      // Setup paths
+      function loadPaths(fn) {
+        var paths = require('./lib/bootstrap/paths');
+        self.paths = new paths(root, fn);
+      },
+      // Load configuration
+      function loadConf(fn) {
+        var config = require('./lib/bootstrap/conf');
+        var p = path.join(self.paths.get('config'), 'config.json');
+        self.config = config(p);
+        fn();
+      },
+      // Load controllers
+      function loadControllers(fn) {
+        var controllerLoader = require('./lib/bootstrap/controllerloader');
+        var p = self.paths.get('controllers');
+        controllerLoader(p, function (n, c) {
+          self.setController(n, c);
+        }, fn);
+      },
+      // Load helpers
+      function loadHelpers(fn) {
+        fn();
+      },
+      // Initialize controllers
+      function initializeControllers(fn) {
+        fn();
+      },
+      // Setup router and load routes
+      function setupRoutes(fn) {
+        fn();
+      },
+      // Preload views
+      function preloadViews(fn) {
+        fn();
+      },
+      // Setup server
+      function setupServer(fn) {
+        fn();
+      }
+    ],
+    function (err) {
+      callback(err);
+  });
+};
 
 //
 // ## Set Controller
