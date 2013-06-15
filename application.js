@@ -9,7 +9,7 @@ var events = require('events');
 // ## Application Constructor
 //
 var Application = function () {
-  events.EventMitter.call(this);
+  events.EventEmitter.call(this);
 
   this.controllers = {};
 };
