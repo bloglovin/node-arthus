@@ -105,6 +105,10 @@ suite('Core Application', function () {
       // Test routes loading
       assert.equal(a.routers.get.match('/').fn, 'index.index');
 
+      // Make sure init are run.
+      assert.equal(a.controllers.foo.bar, 'foobar');
+      assert.equal(a.helpers.bar.foo, 'baz');
+
       done();
     });
   });

@@ -1,4 +1,9 @@
 module.exports = function () {
-  var helper = true;
+  this.foo = 'bar';
+};
+
+module.exports.prototype.init = function (app, fn) {
+  this.foo = 'baz';
+  fn();
 };
 

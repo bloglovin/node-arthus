@@ -81,13 +81,31 @@ Application.prototype.bootstrap = function (root, callback) {
         var routes = path.join(p, 'routes.json');
         require('./lib/bootstrap/loadroutes')(routes, self.routers, fn);
       },
-      // Initialize controllers
+      // Initialize controllers, and helpers
       function initializeControllers(fn) {
-        fn();
-      },
-      // Initialize helpers
-      function initializeControllers(fn) {
-        fn();
+        var initializers = [];
+
+        // Make sure the controllers maintain this-context in init.
+        function init(obj, app) {
+          return function (fn) {
+            obj.init(app, fn);
+          };
+        }
+
+        // Get all controllers and helpers with init functions
+        for (var controller in self.controllers) {
+          if (typeof self.controllers[controller].init === 'function') {
+            initializers.push(init(self.controllers[controller], self));
+          }
+        }
+        for (var helper in self.helpers) {
+          if (typeof self.helpers[helper].init === 'function') {
+            initializers.push(init(self.helpers[helper], self));
+          }
+        }
+
+        // Execute initialize
+        async.parallel(initializers, fn);
       },
       // Preload views
       function preloadViews(fn) {
