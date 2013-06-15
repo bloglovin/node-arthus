@@ -1,0 +1,10 @@
+{
+  "foo": {
+    "bar": "baz",
+    "biz": "boz"
+  },
+
+  "beep": 1.0,
+  "boop": "abc"
+}
+
