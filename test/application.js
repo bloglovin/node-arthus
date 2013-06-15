@@ -102,6 +102,9 @@ suite('Core Application', function () {
         assert(a.routers[method], 'Missing router for method: ' + method);
       });
 
+      // Test routes loading
+      assert.equal(a.routers.get.match('/').fn, 'index.index');
+
       done();
     });
   });

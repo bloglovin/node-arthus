@@ -75,6 +75,12 @@ Application.prototype.bootstrap = function (root, callback) {
         self.routers = routers;
         fn();
       },
+      // Load routes
+      function loadRoutes(fn) {
+        var p = self.paths.get('config');
+        var routes = path.join(p, 'routes.json');
+        require('./lib/bootstrap/loadroutes')(routes, self.routers, fn);
+      },
       // Initialize controllers
       function initializeControllers(fn) {
         fn();
