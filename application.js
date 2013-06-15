@@ -14,6 +14,7 @@ var Application = function () {
   events.EventEmitter.call(this);
 
   this.controllers = {};
+  this.helpers     = {};
 };
 
 // Extend event emitter.
@@ -55,7 +56,11 @@ Application.prototype.bootstrap = function (root, callback) {
       },
       // Load helpers
       function loadHelpers(fn) {
-        fn();
+        var helperLoader = require('./lib/bootstrap/helperloader');
+        var p = self.paths.get('helpers');
+        helperLoader(p, function (n, c) {
+          self.setHelper(n, c);
+        }, fn);
       },
       // Initialize controllers
       function initializeControllers(fn) {
@@ -109,6 +114,41 @@ Application.prototype.getController = function (name) {
   var ret = false;
   if (this.controllers[name]) {
     ret = this.controllers[name];
+  }
+
+  return ret;
+};
+
+//
+// ## Set Helper
+//
+// * **name**, name of the helper.
+// * **helper**, the helper.
+//
+// **Returns** `false` if a helper by that name already exists.
+//
+Application.prototype.setHelper = function (name, helper) {
+  var ret = false;
+  if (!this.helpers[name]) {
+    this.helpers[name] = helper;
+    ret = true;
+    this.emit('helperSet', [helper]);
+  }
+
+  return ret;
+};
+
+//
+// ## Get Helper
+//
+// * **name**, name of the helper.
+//
+// **Returns** a helper or `false` if a helper does not exist.
+//
+Application.prototype.getHelper = function (name) {
+  var ret = false;
+  if (this.helpers[name]) {
+    ret = this.helpers[name];
   }
 
   return ret;
