@@ -1,17 +1,23 @@
 //
 // # Application
 //
+// Core application object. Manages application state and directs all the
+// different parts.
+//
 
 var util       = require('util');
 var events     = require('events');
 var async      = require('async');
 var path       = require('path');
+var http       = require('http');
 var routes     = require('routes');
 var dispatcher = require('./lib/dispatcher');
 var render     = require('./lib/renderer');
 
 //
 // ## Application Constructor
+//
+// Create a new application object that inherits from *EventEmitter*.
 //
 var Application = function () {
   events.EventEmitter.call(this);
@@ -22,6 +28,7 @@ var Application = function () {
   this.config      = null;
   this.dispatcher  = null;
   this.renderer    = null;
+  this.server      = null;
 };
 
 // Extend event emitter.
@@ -110,7 +117,12 @@ Application.prototype.bootstrap = function (root, callback) {
       },
       // Setup server
       function setupServer(fn) {
-        fn();
+        self.server = http.createServer(function (req, res) {
+          self.dispatcher.dispatch(req, res);
+        });
+
+        var port = self.config.get('http:port') || 3000;
+        self.server.listen(port, fn);
       }
     ],
     function (err) {
