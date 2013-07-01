@@ -2,7 +2,7 @@
   "name": "arthus",
   "version": "0.0.0",
   "description": "Yet another web framework.",
-  "main": "index.js",
+  "main": "application.js",
   "directories": {
     "test": "test"
   },
