@@ -19,7 +19,10 @@ var render     = require('./lib/renderer');
 //
 // Create a new application object that inherits from *EventEmitter*.
 //
-var Application = function () {
+// * **logger**, a custom instance of `Winston`. If not specified a default
+//   logger will be created.
+//
+var Application = function (logger) {
   events.EventEmitter.call(this);
 
   this.controllers = {};
@@ -29,6 +32,11 @@ var Application = function () {
   this.dispatcher  = null;
   this.renderer    = null;
   this.server      = null;
+  this.logger      = logger || new (require('winston').Logger)({
+    transports: [
+      new (require('winston').transports.Console)()
+    ]
+  });
 };
 
 // Extend event emitter.
@@ -53,6 +61,7 @@ Application.prototype.shutDown = function () {
 //   is encountered.
 //
 Application.prototype.bootstrap = function (root, callback) {
+  this.logger.log('info', 'Bootstrap sequence initiated.');
   this.root = root;
   var self = this;
   async.series(

@@ -80,7 +80,8 @@ suite('Core Application', function () {
 
 
   test('Bootstraps correctly.', function (done) {
-    var a = new app();
+    // Add no-op logger to avoid spam in test output.
+    var a = new app({log: function () {}});
     a.bootstrap(__dirname + '/fixture', function (err) {
       assert(!err, 'Bootstrap encountered an error.');
       assert(a.paths.get('controllers'), 'Paths should be correctly setup.');
