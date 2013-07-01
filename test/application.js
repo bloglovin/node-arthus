@@ -109,6 +109,10 @@ suite('Core Application', function () {
       assert.equal(a.controllers.foo.bar, 'foobar');
       assert.equal(a.helpers.bar.foo, 'baz');
 
+      // Make sure views are preloaded
+      assert(a.renderer);
+      assert(a.renderer.views.index);
+
       done();
     });
   });
