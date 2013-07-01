@@ -7,6 +7,7 @@ var events = require('events');
 var async  = require('async');
 var path   = require('path');
 var routes = require('routes');
+var render = require('./lib/renderer');
 
 //
 // ## Application Constructor
@@ -16,6 +17,8 @@ var Application = function () {
 
   this.controllers = {};
   this.helpers     = {};
+  this.paths       = null;
+  this.renderer    = null;
 };
 
 // Extend event emitter.
@@ -109,7 +112,9 @@ Application.prototype.bootstrap = function (root, callback) {
       },
       // Preload views
       function preloadViews(fn) {
-        fn();
+        var viewspath = self.paths.get('views');
+        self.renderer = new render(viewspath);
+        self.renderer.preload(fn);
       },
       // Setup server
       function setupServer(fn) {
