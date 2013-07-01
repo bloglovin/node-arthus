@@ -218,5 +218,31 @@ Application.prototype.getHelper = function (name) {
   return ret;
 };
 
+//
+// ## Get logger
+//
+// Returns a function that can be used for convenience. It wraps the `logger`
+// in a closure so that you can do something like this in your code:
+//
+//     var log = this.app.getLogger('info');
+//     log('Foobar');
+//
+// All calls to `log` will behave like if you did:
+//
+//     this.app.logger('info', 'Foobar');
+//
+// * **type**, the type of logger you want; `info`, `error` etc.
+//
+// **Returns** a function for logging.
+//
+Application.prototype.getLogger = function (type) {
+  var self = this;
+  return function () {
+    var args = Array.prototype.slice.call(arguments, 0);
+    args.unshift(type);
+    self.logger.log.apply(self.logger, args);
+  };
+};
+
 module.exports = Application;
 
