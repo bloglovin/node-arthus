@@ -106,6 +106,9 @@ suite('Core Application', function () {
       assert(a.renderer);
       assert(a.renderer.views.index);
 
+      // Don't bother testing HTTP-server, the bootstrap sequence won't
+      // finish if listening fails.
+
       a.shutDown();
       done();
     });
