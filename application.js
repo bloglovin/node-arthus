@@ -2,12 +2,13 @@
 // # Application
 //
 
-var util   = require('util');
-var events = require('events');
-var async  = require('async');
-var path   = require('path');
-var routes = require('routes');
-var render = require('./lib/renderer');
+var util       = require('util');
+var events     = require('events');
+var async      = require('async');
+var path       = require('path');
+var routes     = require('routes');
+var dispatcher = require('./lib/dispatcher');
+var render     = require('./lib/renderer');
 
 //
 // ## Application Constructor
@@ -18,6 +19,8 @@ var Application = function () {
   this.controllers = {};
   this.helpers     = {};
   this.paths       = null;
+  this.config      = null;
+  this.dispatcher  = null;
   this.renderer    = null;
 };
 
@@ -68,21 +71,10 @@ Application.prototype.bootstrap = function (root, callback) {
       },
       // Setup router and load routes
       function setupRoutes(fn) {
-        var HTTPMethods = ['get', 'post', 'put', 'delete', 'patch'];
-        var routers = {};
-
-        for (var i in HTTPMethods) {
-          routers[HTTPMethods[i]] = routes();
-        }
-
-        self.routers = routers;
-        fn();
-      },
-      // Load routes
-      function loadRoutes(fn) {
         var p = self.paths.get('config');
         var routes = path.join(p, 'routes.json');
-        require('./lib/bootstrap/loadroutes')(routes, self.routers, fn);
+        self.dispatcher = new dispatcher(self);
+        self.dispatcher.batchLoad(routes, fn);
       },
       // Initialize controllers, and helpers
       function initializeControllers(fn) {
@@ -194,19 +186,6 @@ Application.prototype.getHelper = function (name) {
   }
 
   return ret;
-};
-
-//
-// ## Set Route
-//
-// Binds a route to a controller and action.
-//
-// * **method**, HTTP method this is route is for.
-// * **route**, the path to bind.
-// * **controller**, a string in the form of `controller.action`.
-//
-Application.prototype.setRoute = function (method, route, controller) {
-  this.routers[method].addRoute(route, controller);
 };
 
 module.exports = Application;
