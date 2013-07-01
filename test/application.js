@@ -82,6 +82,7 @@ suite('Core Application', function () {
   test('Bootstraps correctly.', function (done) {
     var a = new app();
     a.bootstrap(__dirname + '/fixture', function (err) {
+      assert(!err, 'Bootstrap encountered an error.');
       assert(a.paths.get('controllers'), 'Paths should be correctly setup.');
       assert(a.config.get('boop'), 'Configuration should be loaded.');
       assert(a.getController('foo'), 'Should correctly load controllers.');
@@ -104,6 +105,7 @@ suite('Core Application', function () {
       assert(a.renderer);
       assert(a.renderer.views.index);
 
+      a.shutDown();
       done();
     });
   });

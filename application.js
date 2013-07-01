@@ -35,6 +35,15 @@ var Application = function () {
 util.inherits(Application, events.EventEmitter);
 
 //
+// ## Shutdown
+//
+// Shutdown HTTP server and other connections.
+//
+Application.prototype.shutDown = function () {
+  this.server.close();
+};
+
+//
 // ## Bootstrap
 //
 // Bootstrap application by loading controllers, and helpers and everything.
