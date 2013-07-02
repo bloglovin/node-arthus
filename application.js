@@ -61,7 +61,8 @@ Application.prototype.shutDown = function () {
 //   is encountered.
 //
 Application.prototype.bootstrap = function (root, callback) {
-  this.logger.log('info', 'Bootstrap sequence initiated.');
+  var log = this.getLogger('info');
+  log('[Bootstrap] Bootstrap sequence initiated.');
   this.root = root;
   var self = this;
   async.series(
@@ -69,6 +70,7 @@ Application.prototype.bootstrap = function (root, callback) {
       // Setup paths
       function loadPaths(fn) {
         var paths = require('./lib/bootstrap/paths');
+        log('[Bootstrap] Initializing paths.');
         self.paths = new paths(root, fn);
       },
       // Load configuration
@@ -76,13 +78,16 @@ Application.prototype.bootstrap = function (root, callback) {
         var config = require('./lib/bootstrap/conf');
         var p = path.join(self.paths.get('config'), 'config.json');
         self.config = config(p);
+        log('[Bootstrap] Config loaded.');
         fn();
       },
       // Load controllers
       function loadControllers(fn) {
         var controllerLoader = require('./lib/bootstrap/controllerloader');
         var p = self.paths.get('controllers');
+        log('[Bootstrap] Loading controllers:');
         controllerLoader(p, function (n, c) {
+          log('\t Did load controller: %s', n);
           self.setController(n, c);
         }, fn);
       },
@@ -90,7 +95,9 @@ Application.prototype.bootstrap = function (root, callback) {
       function loadHelpers(fn) {
         var helperLoader = require('./lib/bootstrap/helperloader');
         var p = self.paths.get('helpers');
+        log('[Bootstrap] Loading helpers:');
         helperLoader(p, function (n, c) {
+          log('\t Did load helper: %s', n);
           self.setHelper(n, c);
         }, fn);
       },
@@ -99,28 +106,37 @@ Application.prototype.bootstrap = function (root, callback) {
         var p = self.paths.get('config');
         var routes = path.join(p, 'routes.json');
         self.dispatcher = new dispatcher(self);
+        log('[Bootstrap] Loading routes.');
         self.dispatcher.batchLoad(routes, fn);
       },
       // Initialize controllers, and helpers
       function initializeControllers(fn) {
         var initializers = [];
+        log('[Bootstrap] Initializing helpers and controllers:');
 
         // Make sure the controllers maintain this-context in init.
-        function init(obj, app) {
+        function init(obj, app, name) {
           return function (fn) {
-            obj.init(app, fn);
+            log('\t Initializing %s', name);
+            if (obj.init.length === 2) {
+              obj.init(app, fn);
+            }
+            else {
+              obj.init(app);
+              fn();
+            }
           };
         }
 
         // Get all controllers and helpers with init functions
         for (var controller in self.controllers) {
           if (typeof self.controllers[controller].init === 'function') {
-            initializers.push(init(self.controllers[controller], self));
+            initializers.push(init(self.controllers[controller], self, controller));
           }
         }
         for (var helper in self.helpers) {
           if (typeof self.helpers[helper].init === 'function') {
-            initializers.push(init(self.helpers[helper], self));
+            initializers.push(init(self.helpers[helper], self, helper));
           }
         }
 
@@ -131,6 +147,7 @@ Application.prototype.bootstrap = function (root, callback) {
       function preloadViews(fn) {
         var viewspath = self.paths.get('views');
         self.renderer = new render(viewspath);
+        log('[Bootstrap] Views loaded.');
         self.renderer.preload(fn);
       },
       // Setup server
@@ -140,7 +157,10 @@ Application.prototype.bootstrap = function (root, callback) {
         });
 
         var port = self.config.get('http:port') || 3000;
-        self.server.listen(port, fn);
+        self.server.listen(port, function () {
+          log('[Bootstrap] Server listning on port %d', port);
+          fn();
+        });
       }
     ],
     function (err) {
