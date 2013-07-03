@@ -51,11 +51,17 @@ suite('Dispatcher', function () {
     var req = {
       headers: {
         'x-requested-with': 'XMLHttpRequest'
-      }
+      },
+      url: 'foobar'
+    };
+    var req2 = {
+      headers: { },
+      url: '?json=true'
     };
 
     var d = new dispatcher({});
     assert(d.requestIsAJAX(req));
+    assert(d.requestIsAJAX(req2));
   });
 });
 
