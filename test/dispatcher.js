@@ -40,11 +40,11 @@ suite('Dispatcher', function () {
 
   test('Setting a pre request helper should work.', function (done) {
     var d = new dispatcher();
-    d.addPreRequestHelper(function () {
+    d.addPreRequestHelper('test', function () {
       done();
     });
 
-    d.preRequest[0]();
+    d.preRequest.test();
   });
 
   test('Correctly identifies AJAX requests.', function () {
