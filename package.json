@@ -1,6 +1,6 @@
 {
   "name": "arthus",
-  "version": "0.0.0",
+  "version": "0.0.3",
   "description": "Yet another web framework.",
   "main": "application.js",
   "directories": {
