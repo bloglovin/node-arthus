@@ -158,7 +158,7 @@ Application.prototype.bootstrap = function (root, callback) {
 
         var port = self.config.get('http:port') || 3000;
         self.server.listen(port, function () {
-          log('[Bootstrap] Server listning on port %d', port);
+          log('[Bootstrap] Server listening on port %d', port);
           fn();
         });
       }
